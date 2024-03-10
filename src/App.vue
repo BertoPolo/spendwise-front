@@ -1,0 +1,95 @@
+<template>
+  <Header />
+  <div class="container">
+    <Balance :total="total" />
+    <IncomeExpenses :income="+income" :expenses="+expenses" />
+    <TransactionList :transactions="transactions" @transactionDeleted="handleTransactionDelete" />
+    <AddTransaction @transactionSubmitted="handleTransactionSubmit" /><!--  here goes the name of the event you defined inside -->
+  </div>
+</template>
+
+<script setup>
+import Header from "./components/Header.vue"
+import Balance from "./components/Balance.vue"
+import IncomeExpenses from "./components/IncomeExpenses.vue"
+import TransactionList from "./components/TransactionList.vue"
+import AddTransaction from "./components/AddTransaction.vue"
+
+import { useToast } from "vue-toastification"
+import { ref, computed, onMounted } from "vue"
+
+const toast = useToast()
+
+onMounted(() => {
+  getTransactions()
+
+  // if (savedTransactions) transactions.value = savedTransactions
+})
+
+const BASE_URL = "http://localhost:3000/transactions"
+
+const getTransactions = async () => {
+  try {
+    const response = await fetch(BASE_URL)
+    if (!response.ok) throw new Error("Failed to fetch transactions")
+    transactions.value = await response.json()
+  } catch (error) {
+    toast.error(`Error: ${error.message}`)
+  }
+}
+
+const addTransaction = async (transactionData) => {
+  try {
+    const response = await fetch(BASE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: transactionData.text,
+        amount: transactionData.amount,
+      }),
+    })
+    if (!response.ok) throw new Error("Failed to add transaction")
+    const newTransaction = await response.json()
+    transactions.value.push(newTransaction)
+    toast.success("Transaction added")
+  } catch (error) {
+    toast.error(`Error: ${error.message}`)
+  }
+}
+
+const deleteTransaction = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) throw new Error("Failed to delete transaction")
+    transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
+    toast.success("Transaction deleted")
+  } catch (error) {
+    toast.error(`Error: ${error.message}`)
+  }
+}
+
+const transactions = ref([])
+
+// get total amount of expenses
+const total = computed(() => transactions.value.reduce((acc, transaction) => acc + transaction.amount, 0))
+
+// get income
+const income = computed(() => {
+  return transactions.value
+    .filter((transaction) => transaction.amount > 0)
+    .reduce((acc, transaction) => acc + transaction.amount, 0)
+    .toFixed(2)
+})
+
+// get expenses
+const expenses = computed(() => {
+  return transactions.value
+    .filter((transaction) => transaction.amount < 0)
+    .reduce((acc, transaction) => acc + transaction.amount, 0)
+    .toFixed(2)
+})
+</script>
