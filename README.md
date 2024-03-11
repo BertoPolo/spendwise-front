@@ -2,7 +2,7 @@
 
 ## Overview
 
-TranTrack is a dynamic, user-friendly frontend application developed with Vue.js, designed for efficient tracking and management of your financial transactions. Whether you're looking to maintain a personal budget, manage business expenses, or just keep track of your spending habits, TranTrack provides a comprehensive solution to monitor your financial health in real-time.
+Charge-vue is a dynamic, user-friendly frontend application developed with Vue.js, designed for efficient tracking and management of your financial transactions. Whether you're looking to maintain a personal budget, manage business expenses, or just keep track of your spending habits, Charge-vue provides a comprehensive solution to monitor your financial health in real-time.
 
 ## Key Features
 
@@ -20,7 +20,7 @@ TranTrack is a dynamic, user-friendly frontend application developed with Vue.js
 Begin by cloning the frontend repository to your local environment:
 
 ```bash
-git clone https://github.com/YourUsername/charge-vue.git
+git clone https://github.com/BertoPolo/charge-vue.git
 ```
 
 ### Install Dependencies
