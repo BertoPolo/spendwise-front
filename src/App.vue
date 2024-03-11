@@ -59,6 +59,19 @@ const addTransaction = async (transactionData) => {
   }
 }
 
+// const updateTransaction = async (id) => { need to be finished
+//   try {
+//     const response = await fetch(`${BASE_URL}/${id}`, {
+//       method: "PUT",
+//     })
+//     if (!response.ok) throw new Error("Failed to update transaction")
+//     transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
+//     toast.success("Transaction updated successfully")
+//   } catch (error) {
+//     toast.error(`Error: ${error.message}`)
+//   }
+// }
+
 const deleteTransaction = async (id) => {
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
