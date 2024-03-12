@@ -60,6 +60,7 @@ const addTransaction = async (transactionData) => {
     if (!response.ok) throw new Error("Failed to add transaction")
     const newTransaction = await response.json()
     transactions.value.push(newTransaction)
+    socket.emit("transactions", newTransaction)
     toast.success("Transaction added")
   } catch (error) {
     toast.error(`Error: ${error.message}`)
@@ -80,6 +81,7 @@ const updateTransaction = async (transaction) => {
     })
     if (!response.ok) throw new Error("Failed to update transaction")
     const updatedTransaction = await response.json()
+    socket.emit("transactions", updatedTransaction)
 
     const index = transactions.value.findIndex((t) => t.id === updatedTransaction.id)
     if (index !== -1) {
@@ -97,7 +99,9 @@ const deleteTransaction = async (id) => {
       method: "DELETE",
     })
     if (!response.ok) throw new Error("Failed to delete transaction")
-    transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
+    const deletedTransaction = (transactions.value = transactions.value.filter((transaction) => transaction.id !== id))
+    socket.emit("transactions", deletedTransaction)
+
     toast.success("Transaction deleted")
   } catch (error) {
     toast.error(`Error: ${error.message}`)
