@@ -1,41 +1,49 @@
-<template>
-  <Header />
-  <div class="container">
-    <Balance :total="total" />
-    <IncomeExpenses :income="+income" :expenses="+expenses" />
-    <TransactionList :transactions="transactions" @transactionDeleted="deleteTransaction" @transactionUpdated="updateTransaction" />
-    <AddTransaction @transactionSubmitted="addTransaction" /><!--  here goes the name of the event you defined inside -->
-  </div>
-</template>
-
 <script setup>
+import { useToast } from "vue-toastification"
+import { ref, computed, onMounted, onUnmounted } from "vue"
+import io from "socket.io-client"
+
 import Header from "./components/Header.vue"
 import Balance from "./components/Balance.vue"
 import IncomeExpenses from "./components/IncomeExpenses.vue"
 import TransactionList from "./components/TransactionList.vue"
 import AddTransaction from "./components/AddTransaction.vue"
 
-import { useToast } from "vue-toastification"
-import { ref, computed, onMounted } from "vue"
-
 const toast = useToast()
 
+const socket = io("http://localhost:3004")
+
 onMounted(() => {
-  getTransactions()
+  socket.on("connect", () => {
+    console.log("Connected to the backend via WebSocket")
+  })
+
+  socket.on("transactions", (updatedTransactions) => {
+    transactions.value = updatedTransactions
+  })
 })
+
+onUnmounted(() => {
+  socket.off("connect")
+  socket.off("transactions")
+  socket.disconnect()
+})
+
+// onMounted(() => {
+//   getTransactions()
+// })
 
 const BASE_URL = "http://localhost:3004/transactions"
 
-const getTransactions = async () => {
-  try {
-    const response = await fetch(BASE_URL)
-    if (!response.ok) throw new Error("Failed to fetch transactions")
-    transactions.value = await response.json()
-    console.log(transactions.value)
-  } catch (error) {
-    toast.error(`Error: ${error.message}`)
-  }
-}
+// const getTransactions = async () => {
+//   try {
+//     const response = await fetch(BASE_URL)
+//     if (!response.ok) throw new Error("Failed to fetch transactions")
+//     transactions.value = await response.json()
+//   } catch (error) {
+//     toast.error(`Error: ${error.message}`)
+//   }
+// }
 
 const addTransaction = async (transactionData) => {
   try {
@@ -66,7 +74,7 @@ const updateTransaction = async (transaction) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        text: transaction.text,
+        description: transaction.description,
         amount: transaction.amount,
       }),
     })
@@ -117,3 +125,13 @@ const expenses = computed(() => {
     .toFixed(2)
 })
 </script>
+
+<template>
+  <Header />
+  <div class="container">
+    <Balance :total="total" />
+    <IncomeExpenses :income="+income" :expenses="+expenses" />
+    <TransactionList :transactions="transactions" @transactionDeleted="deleteTransaction" @transactionUpdated="updateTransaction" />
+    <AddTransaction @transactionSubmitted="addTransaction" /><!--  here goes the name of the event you defined inside -->
+  </div>
+</template>
