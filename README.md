@@ -38,5 +38,7 @@ npm install
 To launch charge-vue in development mode with hot-reload functionality, use the following command:
 
 ```bash
-npm run start
+npm run dev
 ```
+
+Open http://localhost:5173/

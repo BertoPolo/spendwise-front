@@ -3,8 +3,8 @@
   <div class="container">
     <Balance :total="total" />
     <IncomeExpenses :income="+income" :expenses="+expenses" />
-    <TransactionList :transactions="transactions" @transactionDeleted="handleTransactionDelete" />
-    <AddTransaction @transactionSubmitted="handleTransactionSubmit" /><!--  here goes the name of the event you defined inside -->
+    <TransactionList :transactions="transactions" @transactionDeleted="deleteTransaction" @transactionUpdated="updateTransaction" />
+    <AddTransaction @transactionSubmitted="addTransaction" /><!--  here goes the name of the event you defined inside -->
   </div>
 </template>
 
@@ -22,17 +22,16 @@ const toast = useToast()
 
 onMounted(() => {
   getTransactions()
-
-  // if (savedTransactions) transactions.value = savedTransactions
 })
 
-const BASE_URL = "http://localhost:3000/transactions"
+const BASE_URL = "http://localhost:3004/transactions"
 
 const getTransactions = async () => {
   try {
     const response = await fetch(BASE_URL)
     if (!response.ok) throw new Error("Failed to fetch transactions")
     transactions.value = await response.json()
+    console.log(transactions.value)
   } catch (error) {
     toast.error(`Error: ${error.message}`)
   }
@@ -59,18 +58,30 @@ const addTransaction = async (transactionData) => {
   }
 }
 
-// const updateTransaction = async (id) => { need to be finished
-//   try {
-//     const response = await fetch(`${BASE_URL}/${id}`, {
-//       method: "PUT",
-//     })
-//     if (!response.ok) throw new Error("Failed to update transaction")
-//     transactions.value = transactions.value.filter((transaction) => transaction.id !== id)
-//     toast.success("Transaction updated successfully")
-//   } catch (error) {
-//     toast.error(`Error: ${error.message}`)
-//   }
-// }
+const updateTransaction = async (transaction) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${transaction.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: transaction.text,
+        amount: transaction.amount,
+      }),
+    })
+    if (!response.ok) throw new Error("Failed to update transaction")
+    const updatedTransaction = await response.json()
+
+    const index = transactions.value.findIndex((t) => t.id === updatedTransaction.id)
+    if (index !== -1) {
+      transactions.value.splice(index, 1, updatedTransaction)
+    }
+    toast.success("Transaction updated successfully")
+  } catch (error) {
+    toast.error(`Error: ${error.message}`)
+  }
+}
 
 const deleteTransaction = async (id) => {
   try {
