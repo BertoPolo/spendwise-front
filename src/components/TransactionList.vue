@@ -48,7 +48,8 @@ const checkEnterKey = (event) => {
         {{ transaction.description }} <span>${{ transaction.amount }}</span>
       </template>
       <button class="delete-btn" @click="deleteTransaction(transaction.id)">x</button>
-      <button class="edit-btn" @click="startEditing(transaction)">e</button>
+      <button class="edit-btn" @click="startEditing(transaction)">&#9998;</button>
+      <!-- Cambiado aquí -->
     </li>
   </ul>
 </template>
