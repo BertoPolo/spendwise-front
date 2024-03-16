@@ -29,21 +29,7 @@ onUnmounted(() => {
   socket.disconnect()
 })
 
-// onMounted(() => {
-//   getTransactions()
-// })
-
 const BASE_URL = "http://localhost:3004/transactions"
-
-// const getTransactions = async () => {
-//   try {
-//     const response = await fetch(BASE_URL)
-//     if (!response.ok) throw new Error("Failed to fetch transactions")
-//     transactions.value = await response.json()
-//   } catch (error) {
-//     toast.error(`Error: ${error.message}`)
-//   }
-// }
 
 const addTransaction = async (transactionData) => {
   try {
@@ -136,6 +122,6 @@ const expenses = computed(() => {
     <Balance :total="total" />
     <IncomeExpenses :income="+income" :expenses="+expenses" />
     <TransactionList :transactions="transactions" @transactionDeleted="deleteTransaction" @transactionUpdated="updateTransaction" />
-    <AddTransaction @transactionSubmitted="addTransaction" /><!--  here goes the name of the event you defined inside -->
+    <AddTransaction @transactionSubmitted="addTransaction" /><
   </div>
 </template>

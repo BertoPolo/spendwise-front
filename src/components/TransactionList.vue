@@ -40,7 +40,6 @@ const checkEnterKey = (event) => {
   <ul id="list" class="list">
     <li v-for="transaction in transactions" :key="transaction.id" :class="transaction.amount > 0 ? 'plus' : 'minus'">
       <template v-if="editingId === transaction.id">
-        <!-- add cancel mode -->
         <input v-model="tempTransaction.description" @keyup.enter="checkEnterKey" class="edit-input" />
         <input v-model="tempTransaction.amount" type="number" @keyup.enter="checkEnterKey" class="edit-input" />
       </template>
@@ -49,7 +48,6 @@ const checkEnterKey = (event) => {
       </template>
       <button class="delete-btn" @click="deleteTransaction(transaction.id)">x</button>
       <button class="edit-btn" @click="startEditing(transaction)">&#9998;</button>
-      <!-- Cambiado aquí -->
     </li>
   </ul>
 </template>
