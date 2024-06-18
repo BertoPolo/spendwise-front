@@ -1,4 +1,4 @@
-# Charge-vue: Vue.js Transaction Tracker
+# SpendWise: Vue.js Transaction Tracker
 
 ## Overview
 
