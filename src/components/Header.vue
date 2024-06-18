@@ -1,3 +1,3 @@
 <template>
-  <h2>Expense Tracker</h2>
+  <h2>Spend Wise</h2>
 </template>
